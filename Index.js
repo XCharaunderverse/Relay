@@ -1,8 +1,12 @@
-const WebSocket = require('ws');
+const http = require('http');
+const { WebSocketServer } = require('ws');
 
-const PORT = process.env.PORT || 8080;
-const wss = new WebSocket.Server({ port: PORT });
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('OpenTune Relay Server is running!\n');
+});
 
+const wss = new WebSocketServer({ server });
 const rooms = new Map();
 
 wss.on('connection', (ws) => {
@@ -20,7 +24,7 @@ wss.on('connection', (ws) => {
         rooms.get(currentRoom).add(ws);
       } else if (currentRoom && rooms.has(currentRoom)) {
         for (const client of rooms.get(currentRoom)) {
-          if (client !== ws && client.readyState === WebSocket.OPEN) {
+          if (client !== ws && client.readyState === ws.OPEN) {
             client.send(message);
           }
         }
@@ -40,5 +44,8 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log('OpenTune Relay Server rodando na porta ' + PORT);
-      
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
+              
