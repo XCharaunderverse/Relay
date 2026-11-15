@@ -1,8 +1,13 @@
+const http = require('http');
 const { WebSocketServer } = require('ws');
 
-const PORT = process.env.PORT || 8080;
-const wss = new WebSocketServer({ port: PORT, host: '0.0.0.0' });
+// Cria um servidor HTTP simples para responder ao Railway e manter o app vivo
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('OpenTune Relay Server is running!\n');
+});
 
+const wss = new WebSocketServer({ server });
 const rooms = new Map();
 
 wss.on('connection', (ws) => {
@@ -40,5 +45,8 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log('OpenTune Relay Server rodando na porta ' + PORT);
-                    
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`OpenTune Relay Server rodando na porta ${PORT}`);
+});
+    
