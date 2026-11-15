@@ -1,7 +1,7 @@
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 8080;
-const wss = new WebSocketServer({ port: PORT });
+const wss = new WebSocketServer({ port: PORT, host: '0.0.0.0' });
 
 const rooms = new Map();
 
@@ -41,3 +41,4 @@ wss.on('connection', (ws) => {
 });
 
 console.log('OpenTune Relay Server rodando na porta ' + PORT);
+                    
